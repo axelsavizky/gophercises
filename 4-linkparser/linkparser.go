@@ -1,10 +1,7 @@
-package main
+package linkparser
 
 import (
-	"fmt"
-	"os"
-	"path/filepath"
-	"runtime"
+	"bytes"
 	"strings"
 
 	"golang.org/x/net/html"
@@ -45,17 +42,8 @@ func extractText(n *html.Node) string {
 	return strings.TrimSpace(result)
 }
 
-func main() {
-	_, b, _, _ := runtime.Caller(0) // Get the path of this file
-	basePath := filepath.Dir(b)     // Get the directory of this file
-
-	// Open the JSON file
-	file, err := os.ReadFile(filepath.Join(basePath, "ex4.html"))
-	if err != nil {
-		panic(err)
-	}
-
-	doc, err := html.Parse(strings.NewReader(string(file)))
+func GetLinksFromPage(page []byte) []Link {
+	doc, err := html.Parse(bytes.NewReader(page))
 	if err != nil {
 		panic(err)
 	}
@@ -63,5 +51,5 @@ func main() {
 	var links []Link
 	findLinks(doc, &links)
 
-	fmt.Println(links)
+	return links
 }
